@@ -5,16 +5,15 @@ run "setup_tests" {
 }
 
 run "appengine" {
-    command = [plan,apply]
 
     variables {
       project_id = "appengine-project-test"
       application = [{
-        id          = 0
+        id          = "0"
         location_id = "us-central"
       }]
       application_url_dispatch_rules = [{
-        id = 0
+        id = "0"
         dispatch_rules = [
           {
             domain  = "*"
@@ -24,7 +23,7 @@ run "appengine" {
         ]
       }]
       domain_mapping = [{
-        id          = 0
+        id          = "0"
         domain_name = "verified-domain.com"
         ssl_settings = [
           {
@@ -33,13 +32,13 @@ run "appengine" {
         ]
       }]
       firewall_rule = [{
-        id            = 0
+        id            = "0"
         priority      = 1000
         action        = "ALLOW"
         source_range  = "*"
       }]
       flexible_app_version = [{
-        id                = 0
+        id                = "0"
         version_id        = "v1"
         service           = "default"
         runtime           = "nodejs"
@@ -80,8 +79,8 @@ run "appengine" {
         }]
       }]
       service_network_settings = [{
-        id          = 0
-        service_id  = 0
+        id          = "0"
+        service_id  = "0"
         network_settings = [
           {
             ingress_traffic_allowed = "INGRESS_TRAFFIC_ALLOWED_INTERNAL_ONLY"

@@ -7,14 +7,14 @@ resource "google_app_engine_application" "this" {
   serving_status = lookup(var.application[count.index], "serving_status")
 
   dynamic "feature_settings" {
-    for_each = lookup(var.application[count.index], "split_health_checks") == null ? [] : ["feature_settings"]
+    for_each = lookup(var.application[count.index], "split_health_checks") == null ? [] : [""]
     content {
       split_health_checks = lookup(var.application[count.index], "split_health_checks")
     }
   }
 
   dynamic "iap" {
-    for_each = lookup(var.application[count.index], "iap") == null ? [] : ["iap"]
+    for_each = lookup(var.application[count.index], "iap") == null ? [] : [""]
     content {
       oauth2_client_id     = lookup(iap.value, "oauth2_client_id")
       oauth2_client_secret = lookup(iap.value, "oauth2_client_secret")
@@ -43,7 +43,7 @@ resource "google_app_engine_domain_mapping" "this" {
   project           = data.google_project.this.project_id
 
   dynamic "ssl_settings" {
-    for_each = lookup(var.domain_mapping[count.index], "ssl_settings") == null ? [] : ["ssl_settings"]
+    for_each = lookup(var.domain_mapping[count.index], "ssl_settings") == null ? [] : [""]
     content {
       ssl_management_type = lookup(ssl_settings.value, "ssl_management_type")
       certificate_id      = lookup(ssl_settings.value, "ssl_management_type") == "MANUAL" ? lookup(ssl_settings.value, "certificate_id") : null
@@ -62,11 +62,9 @@ resource "google_app_engine_firewall_rule" "this" {
 }
 
 resource "google_app_engine_flexible_app_version" "this" {
-  count   = length(var.flexible_app_version)
-  runtime = lookup(var.flexible_app_version[count.index], "runtime")
-  service = try(
-    element(google_app_engine_standard_app_version.this.*.service, lookup(var.flexible_app_version[count.index], "service"))
-  )
+  count                        = length(var.flexible_app_version)
+  runtime                      = lookup(var.flexible_app_version[count.index], "runtime")
+  service                      = element(google_app_engine_standard_app_version.this.*.service, lookup(var.flexible_app_version[count.index], "service"))
   project                      = data.google_project.this.project_id
   version_id                   = lookup(var.flexible_app_version[count.index], "version_id")
   inbound_services             = lookup(var.flexible_app_version[count.index], "inbound_services")
@@ -81,10 +79,10 @@ resource "google_app_engine_flexible_app_version" "this" {
   noop_on_destroy              = lookup(var.flexible_app_version[count.index], "noop_on_destroy")
 
   dynamic "deployment" {
-    for_each = lookup(var.flexible_app_version[count.index], "deployment") == null ? [] : ["deployment"]
+    for_each = lookup(var.flexible_app_version[count.index], "deployment") == null ? [] : [""]
     content {
       dynamic "zip" {
-        for_each = lookup(deployment.value, "zip") == null ? [] : ["zip"]
+        for_each = lookup(deployment.value, "zip") == null ? [] : [""]
         content {
           source_url  = lookup(zip.value, "source_url")
           files_count = lookup(zip.value, "files_count")
@@ -92,7 +90,7 @@ resource "google_app_engine_flexible_app_version" "this" {
       }
 
       dynamic "files" {
-        for_each = lookup(deployment.value, "files") == null ? [] : ["files"]
+        for_each = lookup(deployment.value, "files") == null ? [] : [""]
         content {
           name       = lookup(files.value, "name")
           source_url = lookup(files.value, "source_url")
@@ -100,13 +98,13 @@ resource "google_app_engine_flexible_app_version" "this" {
         }
       }
       dynamic "container" {
-        for_each = lookup(deployment.value, "container") == null ? [] : ["container"]
+        for_each = lookup(deployment.value, "container") == null ? [] : [""]
         content {
           image = lookup(container.value, "image")
         }
       }
       dynamic "cloud_build_options" {
-        for_each = lookup(deployment.value, "cloud_build_options") == null ? [] : ["cloud_build_options"]
+        for_each = lookup(deployment.value, "cloud_build_options") == null ? [] : [""]
         content {
           app_yaml_path       = lookup(cloud_build_options.value, "app_yaml_path")
           cloud_build_timeout = lookup(cloud_build_options.value, "cloud_build_timeout")
@@ -116,7 +114,7 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "api_config" {
-    for_each = lookup(var.flexible_app_version[count.index], "api_config") == null ? [] : ["api_config"]
+    for_each = lookup(var.flexible_app_version[count.index], "api_config") == null ? [] : [""]
     content {
       script           = lookup(api_config.value, "script")
       auth_fail_action = lookup(api_config.value, "auth_fail_action")
@@ -127,7 +125,7 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "automatic_scaling" {
-    for_each = lookup(var.flexible_app_version[count.index], "automatic_scaling") == null ? [] : ["automatic_scaling"]
+    for_each = lookup(var.flexible_app_version[count.index], "automatic_scaling") == null ? [] : [""]
     content {
       cool_down_period        = lookup(automatic_scaling.value, "cool_down_period")
       max_concurrent_requests = lookup(automatic_scaling.value, "max_concurrent_requests")
@@ -139,7 +137,7 @@ resource "google_app_engine_flexible_app_version" "this" {
       min_total_instances     = lookup(automatic_scaling.value, "min_total_instances")
 
       dynamic "network_utilization" {
-        for_each = lookup(automatic_scaling.value, "network_utilization") == null ? [] : ["network_utilization"]
+        for_each = lookup(automatic_scaling.value, "network_utilization") == null ? [] : [""]
         content {
           target_received_bytes_per_second   = lookup(network_utilization.value, "target_received_bytes_per_second")
           target_received_packets_per_second = lookup(network_utilization.value, "target_received_packets_per_second")
@@ -148,7 +146,7 @@ resource "google_app_engine_flexible_app_version" "this" {
         }
       }
       dynamic "disk_utilization" {
-        for_each = lookup(automatic_scaling.value, "disk_utilization") == null ? [] : ["disk_utilization"]
+        for_each = lookup(automatic_scaling.value, "disk_utilization") == null ? [] : [""]
         content {
           target_read_bytes_per_second  = lookup(disk_utilization.value, "target_read_bytes_per_second")
           target_read_ops_per_second    = lookup(disk_utilization.value, "target_read_ops_per_second")
@@ -157,14 +155,14 @@ resource "google_app_engine_flexible_app_version" "this" {
         }
       }
       dynamic "request_utilization" {
-        for_each = lookup(automatic_scaling.value, "request_utilization") == null ? [] : ["request_utilization"]
+        for_each = lookup(automatic_scaling.value, "request_utilization") == null ? [] : [""]
         content {
           target_concurrent_requests      = lookup(request_utilization.value, "target_concurrent_requests")
           target_request_count_per_second = lookup(request_utilization.value, "target_request_count_per_second")
         }
       }
       dynamic "cpu_utilization" {
-        for_each = lookup(automatic_scaling.value, "cpu_utilization") == null ? [] : ["cpu_utilization"]
+        for_each = lookup(automatic_scaling.value, "cpu_utilization") == null ? [] : [""]
         content {
           target_utilization        = lookup(cpu_utilization.value, "target_utilization")
           aggregation_window_length = lookup(cpu_utilization.value, "aggregation_window_length")
@@ -174,7 +172,7 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "endpoints_api_service" {
-    for_each = lookup(var.flexible_app_version[count.index], "endpoints_api_service") == null ? [] : ["endpoints_api_service"]
+    for_each = lookup(var.flexible_app_version[count.index], "endpoints_api_service") == null ? [] : [""]
     content {
       name                   = lookup(endpoints_api_service.value, "name")
       config_id              = lookup(endpoints_api_service.value, "config_id")
@@ -184,14 +182,14 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "entrypoint" {
-    for_each = lookup(var.flexible_app_version[count.index], "shell") == null ? [] : ["entrypoint"]
+    for_each = lookup(var.flexible_app_version[count.index], "shell") == null ? [] : [""]
     content {
       shell = lookup(var.flexible_app_version[count.index], "shell")
     }
   }
 
   dynamic "handlers" {
-    for_each = lookup(var.flexible_app_version[count.index], "handlers") == null ? [] : ["handlers"]
+    for_each = lookup(var.flexible_app_version[count.index], "handlers") == null ? [] : [""]
     content {
       url_regex                   = lookup(handlers.value, "url_regex")
       security_level              = lookup(handlers.value, "security_level")
@@ -200,7 +198,7 @@ resource "google_app_engine_flexible_app_version" "this" {
       redirect_http_response_code = lookup(handlers.value, "redirect_http_response_code")
 
       dynamic "static_files" {
-        for_each = lookup(handlers.value, "static_files") == null ? [] : ["static_files"]
+        for_each = lookup(handlers.value, "static_files") == null ? [] : [""]
         content {
           path                  = lookup(static_files.value, "path")
           upload_path_regex     = lookup(static_files.value, "upload_path_regex")
@@ -213,7 +211,7 @@ resource "google_app_engine_flexible_app_version" "this" {
       }
 
       dynamic "script" {
-        for_each = lookup(handlers.value, "script_path") == null ? [] : ["script"]
+        for_each = lookup(handlers.value, "script_path") == null ? [] : [""]
         content {
           script_path = lookup(handlers.value, "script_path")
         }
@@ -235,14 +233,14 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "manual_scaling" {
-    for_each = lookup(var.flexible_app_version[count.index], "manual_scaling_instances") == null ? [] : ["manual_scaling"]
+    for_each = lookup(var.flexible_app_version[count.index], "manual_scaling_instances") == null ? [] : [""]
     content {
       instances = lookup(var.flexible_app_version[count.index], "manual_scaling_instances")
     }
   }
 
   dynamic "network" {
-    for_each = lookup(var.flexible_app_version[count.index], "network") == null ? [] : ["network"]
+    for_each = lookup(var.flexible_app_version[count.index], "network") == null ? [] : [""]
     content {
       name             = lookup(network.value, "name")
       forwarded_ports  = lookup(network.value, "forwarded_ports")
@@ -266,7 +264,7 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "resources" {
-    for_each = lookup(var.flexible_app_version[count.index], "resources") == null ? [] : ["resources"]
+    for_each = lookup(var.flexible_app_version[count.index], "resources") == null ? [] : [""]
     content {
       cpu       = lookup(resources.value, "cpu")
       disk_gb   = lookup(resources.value, "disk_gb")
@@ -284,7 +282,7 @@ resource "google_app_engine_flexible_app_version" "this" {
   }
 
   dynamic "vpc_access_connector" {
-    for_each = lookup(var.flexible_app_version[count.index], "vpc_access_connector_name") == null ? [] : ["vpc_access_connector"]
+    for_each = lookup(var.flexible_app_version[count.index], "vpc_access_connector_name") == null ? [] : [""]
     content {
       name = lookup(var.flexible_app_version[count.index], "vpc_access_connector_name")
     }
@@ -293,11 +291,11 @@ resource "google_app_engine_flexible_app_version" "this" {
 
 resource "google_app_engine_service_network_settings" "this" {
   count   = length(var.service_network_settings)
-  service = try(element(google_app_engine_standard_app_version.this.*.service, lookup(var.service_network_settings[count.index], "service_id")))
+  service = element(google_app_engine_standard_app_version.this.*.service, lookup(var.service_network_settings[count.index], "service_id"))
   project = data.google_project.this.number
 
   dynamic "network_settings" {
-    for_each = lookup(var.service_network_settings[count.index], "ingress_traffic_allowed") == null ? [] : ["network_settings"]
+    for_each = lookup(var.service_network_settings[count.index], "ingress_traffic_allowed") == null ? [] : [""]
     content {
       ingress_traffic_allowed = lookup(var.service_network_settings[count.index], "ingress_traffic_allowed")
     }
@@ -306,12 +304,12 @@ resource "google_app_engine_service_network_settings" "this" {
 
 resource "google_app_engine_service_split_traffic" "this" {
   count           = length(var.service_split_traffic)
-  service         = try(element(google_app_engine_standard_app_version.this.*.service, lookup(var.service_split_traffic[count.index], "service_id")))
+  service         = element(google_app_engine_standard_app_version.this.*.service, lookup(var.service_split_traffic[count.index], "service_id"))
   project         = data.google_project.this.project_id
   migrate_traffic = lookup(var.service_split_traffic[count.index], "migrate_traffic")
 
   dynamic "split" {
-    for_each = lookup(var.service_split_traffic[count.index], "split") == null ? [] : ["split"]
+    for_each = lookup(var.service_split_traffic[count.index], "split") == null ? [] : [""]
     content {
       allocations = join("=", [element(google_app_engine_standard_app_version.this.*.version_id, lookup(split.value, "app_engine_id")), lookup(split.value, "allocations")])
       shard_by    = lookup(split.value, "shard_by")
@@ -338,10 +336,10 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "deployment" {
-    for_each = lookup(var.standard_app_version[count.index], "deployment") == null ? [] : ["deployment"]
+    for_each = lookup(var.standard_app_version[count.index], "deployment") == null ? [] : [""]
     content {
       dynamic "zip" {
-        for_each = lookup(deployment.value, "zip") == null ? [] : ["zip"]
+        for_each = lookup(deployment.value, "zip") == null ? [] : [""]
         content {
           source_url  = lookup(zip.value, "source_url")
           files_count = lookup(zip.value, "files_count")
@@ -349,7 +347,7 @@ resource "google_app_engine_standard_app_version" "this" {
       }
 
       dynamic "files" {
-        for_each = lookup(deployment.value, "files") == null ? [] : ["files"]
+        for_each = lookup(deployment.value, "files") == null ? [] : [""]
         content {
           name       = lookup(files.value, "name")
           source_url = lookup(files.value, "source_url")
@@ -360,7 +358,7 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "handlers" {
-    for_each = lookup(var.standard_app_version[count.index], "handlers") == null ? [] : ["handlers"]
+    for_each = lookup(var.standard_app_version[count.index], "handlers") == null ? [] : [""]
     content {
       url_regex                   = lookup(handlers.value, "url_regex")
       security_level              = lookup(handlers.value, "security_level")
@@ -369,7 +367,7 @@ resource "google_app_engine_standard_app_version" "this" {
       redirect_http_response_code = lookup(handlers.value, "redirect_http_response_code")
 
       dynamic "static_files" {
-        for_each = lookup(handlers.value, "static_files") == null ? [] : ["static_files"]
+        for_each = lookup(handlers.value, "static_files") == null ? [] : [""]
         content {
           path                  = lookup(static_files.value, "path")
           upload_path_regex     = lookup(static_files.value, "upload_path_regex")
@@ -382,7 +380,7 @@ resource "google_app_engine_standard_app_version" "this" {
       }
 
       dynamic "script" {
-        for_each = lookup(handlers.value, "script_path") == null ? [] : ["script"]
+        for_each = lookup(handlers.value, "script_path") == null ? [] : [""]
         content {
           script_path = lookup(handlers.value, "script_path")
         }
@@ -391,7 +389,7 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "libraries" {
-    for_each = lookup(var.standard_app_version[count.index], "libraries") == null ? [] : ["libraries"]
+    for_each = lookup(var.standard_app_version[count.index], "libraries") == null ? [] : [""]
     content {
       name    = lookup(libraries.value, "name")
       version = lookup(libraries.value, "version")
@@ -399,14 +397,14 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "vpc_access_connector" {
-    for_each = lookup(var.standard_app_version[count.index], "vpc_access_connector_name") == null ? [] : ["vpc_access_connector"]
+    for_each = lookup(var.standard_app_version[count.index], "vpc_access_connector_name") == null ? [] : [""]
     content {
       name = lookup(var.standard_app_version[count.index], "vpc_access_connector_name")
     }
   }
 
   dynamic "automatic_scaling" {
-    for_each = lookup(var.standard_app_version[count.index], "automatic_scaling") == null ? [] : ["automatic_scaling"]
+    for_each = lookup(var.standard_app_version[count.index], "automatic_scaling") == null ? [] : [""]
     content {
       max_concurrent_requests = lookup(automatic_scaling.value, "max_concurrent_requests")
       max_idle_instances      = lookup(automatic_scaling.value, "max_idle_instances")
@@ -415,7 +413,7 @@ resource "google_app_engine_standard_app_version" "this" {
       min_pending_latency     = lookup(automatic_scaling.value, "min_pending_latency")
 
       dynamic "standard_scheduler_settings" {
-        for_each = lookup(automatic_scaling.value, "standard_scheduler_settings") == null ? [] : ["standard_scheduler_settings"]
+        for_each = lookup(automatic_scaling.value, "standard_scheduler_settings") == null ? [] : [""]
         content {
           target_cpu_utilization        = lookup(standard_scheduler_settings.value, "target_cpu_utilization")
           target_throughput_utilization = lookup(standard_scheduler_settings.value, "target_throughput_utilization")
@@ -427,7 +425,7 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "basic_scaling" {
-    for_each = lookup(var.standard_app_version[count.index], "basic_scaling") == null ? [] : ["basic_scaling"]
+    for_each = lookup(var.standard_app_version[count.index], "basic_scaling") == null ? [] : [""]
     content {
       max_instances = lookup(basic_scaling.value, "max_instances")
       idle_timeout  = lookup(basic_scaling.value, "idle_timeout")
@@ -435,7 +433,7 @@ resource "google_app_engine_standard_app_version" "this" {
   }
 
   dynamic "manual_scaling" {
-    for_each = lookup(var.standard_app_version[count.index], "manual_scaling_instances") == null ? [] : ["manual_scaling"]
+    for_each = lookup(var.standard_app_version[count.index], "manual_scaling_instances") == null ? [] : [""]
     content {
       instances = lookup(var.standard_app_version[count.index], "manual_scaling_instances")
     }
